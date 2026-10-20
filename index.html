@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zodiac Seoul Club Matcher 🔮</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Inter & Outfit -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        neonPurple: '#a855f7',
+                        neonPink: '#ec4899',
+                        neonCyan: '#06b6d4',
+                        darkBg: '#09090b',
+                        cardBg: 'rgba(24, 24, 27, 0.75)',
+                    },
+                    boxShadow: {
+                        glowPurple: '0 0 25px -5px rgba(168, 85, 247, 0.4)',
+                        glowPink: '0 0 25px -5px rgba(236, 72, 153, 0.4)',
+                        glowCyan: '0 0 25px -5px rgba(6, 182, 212, 0.4)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #09090b;
+            color: #f4f4f5;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(168, 85, 247, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 85% 85%, rgba(236, 72, 153, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.08) 0%, transparent 60%);
+            background-attachment: fixed;
+        }
+
+        .glass-card {
+            background: rgba(24, 24, 27, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .glass-option {
+            background: rgba(39, 39, 42, 0.6);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-option:hover, .glass-option:active {
+            background: rgba(168, 85, 247, 0.15);
+            border-color: rgba(168, 85, 247, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .glow-text-purple {
+            text-shadow: 0 0 12px rgba(168, 85, 247, 0.6);
+        }
+
+        .glow-text-pink {
+            text-shadow: 0 0 12px rgba(236, 72, 153, 0.6);
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #09090b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #27272a;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a855f7;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4 font-sans antialiased selection:bg-neonPurple selection:text-white">
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 hidden bg-zinc-800 text-zinc-100 px-5 py-3 rounded-full text-xs sm:text-sm font-semibold border border-neonPurple/50 shadow-glowPurple flex items-center gap-2 transition-all duration-300">
+        <i class="fa-solid fa-circle-check text-neonPurple"></i>
+        <span id="toast-msg">Link copied to clipboard!</span>
+    </div>
+
+    <!-- Main Container (Mobile Max Width) -->
+    <main class="w-full max-w-md mx-auto relative z-10 my-auto">
+        
+        <!-- INTRO SCREEN -->
+        <section id="intro-screen" class="glass-card rounded-3xl p-6 sm:p-8 text-center shadow-glowPurple border-zinc-800/80 fade-in">
+            <div class="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-tr from-neonPurple/30 via-neonPink/20 to-transparent border border-neonPurple/40 mb-6 text-4xl shadow-glowPurple animate-pulse">
+                🔮
+            </div>
+            
+            <h1 class="font-heading text-3xl sm:text-4xl font-extrabold tracking-tight mb-3 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400">
+                Zodiac Seoul Club Matcher
+            </h1>
+            
+            <p class="text-zinc-400 text-xs sm:text-sm leading-relaxed mb-8 px-2">
+                Uncover your ultimate midnight destination in Seoul based on your <span class="text-purple-300 font-semibold">Zodiac Element</span> & <span class="text-pink-300 font-semibold">Nightlife Vibe</span>[cite: 1].
+            </p>
+
+            <div class="grid grid-cols-2 gap-3 mb-8 text-left text-xs text-zinc-400 bg-zinc-900/60 p-3.5 rounded-2xl border border-zinc-800">
+                <div class="flex items-center gap-2">
+                    <span class="text-neonPurple text-sm">📍</span> Hongdae & Itaewon[cite: 1]
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-neonPink text-sm">✨</span> Plan B Alternatives[cite: 1]
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-neonCyan text-sm">👔</span> Dress Code Tips[cite: 1]
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-yellow-400 text-sm">🗺️</span> Instant Map Links[cite: 1]
+                </div>
+            </div>
+
+            <button onclick="startQuiz()" class="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-neonPurple via-pink-600 to-neonPink text-white font-heading font-bold text-base shadow-glowPink hover:opacity-95 active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-3 group">
+                <span>Find My Match</span>
+                <i class="fa-solid fa-arrow-right text-sm group-hover:translate-x-1 transition-transform"></i>
+            </button>
+            <p class="text-[10px] text-zinc-500 mt-3 font-mono">Curated for international travelers in Seoul 🇰🇷[cite: 1]</p>
+        </section>
+
+        <!-- QUIZ CONTAINER -->
+        <section id="quiz-screen" class="hidden glass-card rounded-3xl p-6 sm:p-8 shadow-glowPurple border-zinc-800/80">
+            <div class="flex items-center justify-between mb-4">
+                <button id="back-btn" onclick="prevStep()" class="text-xs text-zinc-400 hover:text-white flex items-center gap-1.5 transition-colors">
+                    <i class="fa-solid fa-chevron-left text-[10px]"></i>
+                    <span>Back</span>
+                </button>
+                <div class="flex items-center gap-2 text-xs text-zinc-400 font-mono ml-auto">
+                    <span id="step-indicator" class="text-neonPurple font-bold">Step 1 of 4</span>[cite: 1]
+                    <span id="step-percent">25%</span>[cite: 1]
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <div class="w-full bg-zinc-800 h-2 rounded-full overflow-hidden p-0.5 border border-zinc-700/50">
+                    <div id="progress-bar" class="bg-gradient-to-r from-neonPurple to-neonPink h-full rounded-full transition-all duration-300 w-1/4 shadow-glowPurple"></div>
+                </div>
+            </div>
+
+            <div id="question-card" class="fade-in">
+                <h2 id="question-title" class="font-heading text-xl sm:text-2xl font-bold mb-2 text-zinc-100">
+                    What's your Zodiac Element?[cite: 1]
+                </h2>
+                <p id="question-subtitle" class="text-xs text-zinc-400 mb-6">
+                    Choose the element that aligns with your astrological energy.[cite: 1]
+                </p>
+
+                <div id="options-container" class="space-y-3"></div>
+            </div>
+        </section>
+
+        <!-- LOADING SCREEN -->
+        <section id="loading-screen" class="hidden glass-card rounded-3xl p-10 text-center shadow-glowPurple border-zinc-800/80 fade-in">
+            <div class="relative w-24 h-24 mx-auto mb-6 flex items-center justify-center">
+                <div class="absolute inset-0 rounded-full border-4 border-neonPurple/20 border-t-neonPurple animate-spin"></div>
+                <div class="absolute inset-2 rounded-full border-4 border-neonPink/20 border-b-neonPink animate-spin" style="animation-direction: reverse; animation-duration: 1.5s;"></div>
+                <span class="text-3xl animate-bounce">✨</span>
+            </div>
+            <h3 class="font-heading text-xl font-bold text-zinc-100 mb-2">Aligning Your Stars...</h3>[cite: 1]
+            <p class="text-xs text-zinc-400 animate-pulse">Matching your aura with Seoul's nightlife beats</p>[cite: 1]
+        </section>
+
+        <!-- RESULT SCREEN -->
+        <section id="result-screen" class="hidden space-y-5 fade-in">
+            
+            <!-- Result Header Banner -->
+            <div class="glass-card rounded-3xl p-6 text-center border-neonPurple/30 shadow-glowPurple relative overflow-hidden">
+                <div class="absolute top-0 right-0 transform translate-x-4 -translate-y-4 w-24 h-24 bg-neonPurple/20 rounded-full blur-2xl"></div>
+                
+                <span class="inline-block px-3 py-1 rounded-full text-[10px] font-mono font-bold uppercase tracking-widest bg-neonPurple/20 text-neonPurple border border-neonPurple/30 mb-3">
+                    Your Seoul Midnight Match[cite: 1]
+                </span>
+                
+                <h2 id="persona-title" class="font-heading text-2xl sm:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-300 via-pink-300 to-cyan-300 mb-1">
+                    The Dark Rave Sorcerer[cite: 1]
+                </h2>
+                <p id="persona-desc" class="text-xs text-zinc-400 italic">"Driven by intense basslines and immersive underground energy."</p>[cite: 1]
+            </div>
+
+            <!-- PRIMARY MATCH (99%) -->
+            <div class="glass-card rounded-3xl p-6 border-neonPurple/50 shadow-glowPurple relative">
+                <div class="flex items-center justify-between mb-4 pb-3 border-b border-zinc-800">
+                    <div class="flex items-center gap-2">
+                        <span class="text-lg">🏆</span>
+                        <span class="font-heading font-bold text-sm text-zinc-200">PRIMARY STAR MATCH</span>[cite: 1]
+                    </div>
+                    <span class="text-xs font-mono font-extrabold px-2.5 py-1 rounded-full bg-neonPurple/20 text-neonPurple border border-neonPurple/40">
+                        99% MATCH[cite: 1]
+                    </span>
+                </div>
+
+                <div class="flex justify-between items-start mb-2">
+                    <div>
+                        <h3 id="primary-name" class="font-heading text-2xl font-extrabold text-white glow-text-purple">Cakeshop</h3>[cite: 1]
+                        <span id="primary-area" class="inline-block text-[11px] font-bold text-neonCyan mt-0.5">📍 Itaewon (이태원)</span>[cite: 1]
+                    </div>
+                    <span id="primary-genre-badge" class="text-[10px] font-semibold bg-zinc-800 text-zinc-300 px-2.5 py-1 rounded-lg border border-zinc-700">
+                        Bass Techno[cite: 1]
+                    </span>
+                </div>
+
+                <p id="primary-vibe" class="text-xs text-zinc-300 leading-relaxed mb-4">
+                    The holy grail of underground bass music and dark industrial aesthetics. Known globally for cutting-edge international DJ sets.[cite: 1]
+                </p>
+
+                <div class="bg-zinc-900/80 rounded-2xl p-3.5 mb-4 border border-zinc-800/80 space-y-2 text-xs">
+                    <div class="flex items-start gap-2 text-zinc-300">
+                        <i class="fa-solid fa-shirt text-neonPink text-xs mt-0.5"></i>
+                        <span><strong class="text-zinc-200">Dress Code:</strong> <span id="primary-dress">Streetwear / All Black / Casual Cool</span></span>[cite: 1]
+                    </div>
+                    <div class="flex items-start gap-2 text-zinc-300">
+                        <i class="fa-solid fa-lightbulb text-yellow-400 text-xs mt-0.5"></i>
+                        <span><strong class="text-zinc-200">Pro Tip:</strong> <span id="primary-tip">Arrive before midnight on weekends to avoid long queues.</span></span>[cite: 1]
+                    </div>
+                </div>
+
+                <a id="primary-map-btn" href="#" target="_blank" class="w-full py-3 px-4 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-100 text-xs font-semibold flex items-center justify-center gap-2 border border-zinc-700 transition-colors">
+                    <i class="fa-solid fa-map-location-dot text-neonCyan"></i>
+                    <span>Open in Google Maps / Info</span>[cite: 1]
+                </a>
+            </div>
+
+            <!-- ALTERNATIVE PLAN B (88%) -->
+            <div class="glass-card rounded-3xl p-5 border-zinc-800 shadow-glowCyan relative">
+                <div class="flex items-center justify-between mb-3 pb-2.5 border-b border-zinc-800/80">
+                    <div class="flex items-center gap-2">
+                        <span class="text-base">✨</span>
+                        <span class="font-heading font-bold text-xs text-zinc-300">ALTERNATIVE ORBIT (PLAN B)</span>[cite: 1]
+                    </div>
+                    <span class="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-neonCyan/15 text-neonCyan border border-neonCyan/30">
+                        88% MATCH[cite: 1]
+                    </span>
+                </div>
+
+                <div class="flex justify-between items-start mb-1.5">
+                    <div>
+                        <h4 id="secondary-name" class="font-heading text-lg font-bold text-zinc-100">Faust</h4>[cite: 1]
+                        <span id="secondary-area" class="text-[10px] font-semibold text-neonCyan">📍 Itaewon</span>[cite: 1]
+                    </div>
+                    <span id="secondary-genre-badge" class="text-[9px] bg-zinc-800 text-zinc-400 px-2 py-0.5 rounded border border-zinc-700">
+                        Dark Industrial[cite: 1]
+                    </span>
+                </div>
+
+                <p id="secondary-vibe" class="text-xs text-zinc-400 mb-3">
+                    Top-tier Funktion-One sound system delivering heavy, uncompromising peak-time industrial techno.[cite: 1]
+                </p>
+
+                <a id="secondary-map-btn" href="#" target="_blank" class="w-full py-2.5 px-3 rounded-lg bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 text-xs font-medium flex items-center justify-center gap-2 border border-zinc-800 transition-colors">
+                    <i class="fa-solid fa-compass text-neonPurple"></i>
+                    <span>Check Plan B Venue</span>[cite: 1]
+                </a>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="grid grid-cols-2 gap-3 pt-2">
+                <button onclick="retakeQuiz()" class="py-3.5 px-4 rounded-2xl bg-zinc-900 hover:bg-zinc-800 text-zinc-300 text-xs font-semibold border border-zinc-800 flex items-center justify-center gap-2 transition-colors">
+                    <i class="fa-solid fa-rotate-right"></i>
+                    <span>Retake Quiz</span>[cite: 1]
+                </button>
+                <button onclick="shareResult()" class="py-3.5 px-4 rounded-2xl bg-gradient-to-r from-neonPurple to-neonPink text-white text-xs font-bold shadow-glowPurple flex items-center justify-center gap-2 hover:opacity-90 transition-all">
+                    <i class="fa-solid fa-share-nodes"></i>
+                    <span>Share Result</span>[cite: 1]
+                </button>
+            </div>
+            
+            <p class="text-center text-[10px] text-zinc-500 pt-2">
+                *Clubs in Korea strictly require a physical Passport or Foreigner ID (ARC) for entry.[cite: 1]
+            </p>
+        </section>
+
+    </main>
+
+    <!-- QUIZ & MATCHING ENGINE LOGIC -->
+    <script>
+        const CLUBS = {
+            modeci: {
+                name: "MODECi",
+                area: "Hongdae/Sangsu (홍대/상수)",
+                genre: "Deep Techno / House",
+                vibe: "Artsy rooftop venue offering panoramic Sangsu views alongside minimal techno, house, and disco.",[cite: 1]
+                dress: "Aesthetic / Indie / Casual Cool",
+                tip: "Check out the outdoor rooftop space for fresh air between sets.",[cite: 1]
+                map: "https://www.google.com/maps/search/?api=1&query=MODECi+Hongdae",[cite: 1]
+                tags: ["earth", "house", "locals", "stylish_night"]
+            },
+            cakeshop: {
+                name: "Cakeshop",
+                area: "Itaewon (이태원)",
+                genre: "Bass / Underground",
+                vibe: "The holy grail of underground bass music and dark industrial aesthetics. Famous for international guest DJs and raw energy.",[cite: 1]
+                dress: "Trendy Streetwear / All Black / Casual",
+                tip: "Arrive before midnight on weekends to avoid long queues.",[cite: 1]
+                map: "https://www.google.com/maps/search/?api=1&query=Cakeshop+Itaewon",[cite: 1]
+                tags: ["water", "techno", "ravers", "lose_myself"]
+            },
+            faust: {
+                name: "Faust",
+                area: "Itaewon (이태원)",
+                genre: "Industrial Techno",
+                vibe: "Equipped with a premier Funktion-One sound system for pure, relentless peak-time dark techno raves.",[cite: 1]
+                dress: "Black Rave Wear / Minimal / Comfortable Shoes",
+                tip: "The vibe peaks late around 2:00 AM to 5:00 AM.",[cite: 1]
+                map: "https://www.google.com/maps/search/?api=1&query=Faust+Itaewon",[cite: 1]
+                tags: ["water", "techno", "ravers", "lose_myself"]
+            },
+            soap: {
+                name: "Soap Seoul",
+                area: "Itaewon (이태원)",
+                genre: "House / R&B / Disco",
+                vibe: "Aesthetic neon visuals, signature soapy scent, and groovy House/R&B party sets.",[cite: 1]
+                dress: "Smart Casual / Stylish / Trendy",
+                tip: "Great crowd for socializing and enjoying uplifting dance beats.",[cite: 1]
+                map: "https://www.google.com/maps/search/?api=1&query=Soap+Seoul+Itaewon",[cite: 1]
+                tags: ["earth", "house", "globals", "locals", "stylish_night"]
+            },
+            grainhaus: {
+                name: "Grainhaus",
+                area: "Itaewon (이태원)",
+                genre: "Melodic Techno / Tech-House",
+                vibe: "Artsy cultural lounge venue blending visual art, deep tech-house grooves, and aesthetic lighting.",[cite: 1]
+                dress: "Smart Casual / Aesthetic",
+                tip: "Perfect venue for a sophisticated night out with curated electronic soundscapes.",[cite: 1]
+                map: "https://www.google.com/maps/search/?api=1&query=Grainhaus+Itaewon",[cite: 1]
+                tags: ["earth", "techno", "ravers", "stylish_night"]
+            },
+            flac: {
+                name: "FLAC Seoul",
+                area: "Itaewon (이태원)",
+                genre: "Minimal Techno / Groovy House",
+                vibe: "Cozy 2nd-floor music lounge offering deep, soulful minimal techno and house sets by talented local selectors.",[cite: 1]
+                dress: "Casual Cool / Minimalist",
+                tip: "Intimate atmosphere ideal for enjoying high-quality sound in a relaxed setting.",[cite: 1]
+                map: "https://www.google.com/maps/search/?api=1&query=FLAC+Seoul+Itaewon",[cite: 1]
+                tags: ["water", "house", "ravers", "locals", "stylish_night"]
+            },
+            bolero: {
+                name: "Bolero",
+                area: "Itaewon (이태원)",
+                genre: "Deep Tech-House / Melodic Techno",
+                vibe: "Chic speakeasy-style basement venue loved by fashion/art hipsters for moody visuals and deep hypnotic house.",[cite: 1]
+                dress: "Trendy / Fashion-forward / Stylish",
+                tip: "Knock on the hidden entrance; vibe peaks late after 1:30 AM.",[cite: 1]
+                map: "https://www.google.com/maps/search/?api=1&query=Bolero+Itaewon",[cite: 1]
+                tags: ["earth", "house", "ravers", "locals", "stylish_night"]
+            },
+            prost: {
+                name: "PROST Pub & Lounge",
+                area: "Itaewon (이태원)",
+                genre: "All Mix / Commercial",
+                vibe: "The ultimate global gathering hub behind Hamilton Hotel. High-energy lounge bar filled with travelers.",[cite: 1]
+                dress: "Casual / Smart Dress",
+                tip: "Ideal starting spot for early drinks before hitting late-night clubs.",[cite: 1]
+                map: "https://www.google.com/maps/search/?api=1&query=PROST+Itaewon",[cite: 1]
+                tags: ["air", "kpop", "locals", "globals", "local_culture", "make_friends"]
+            },
+            fountain: {
+                name: "The Fountain",
+                area: "Itaewon (이태원)",
+                genre: "All Mix / Commercial Pop",
+                vibe: "Iconic European-style multi-story lounge bar featuring massive interior fountains, arcade games, and commercial pop hits.",[cite: 1]
+                dress: "Smart Casual / Partywear",
+                tip: "Huge international crowd; perfect starting venue for group drinking and socializing.",[cite: 1]
+                map: "https://www.google.com/maps/search/?api=1&query=The+Fountain+Itaewon",[cite: 1]
+                tags: ["air", "kpop", "locals", "globals", "local_culture", "make_friends"]
+            },
+            agave: {
+                name: "Agave Itaewon",
+                area: "Itaewon (이태원)",
+                genre: "Reggaeton / Latin Pop",
+                vibe: "Exotic Latin vibe with tequilas, tropical heat, and endless Reggaeton rhythms.",[cite: 1]
+                dress: "Vibrant / Casual Partywear",
+                tip: "Passionate dancing crowd; over 80% international guests.",[cite: 1]
+                map: "https://www.google.com/maps/search/?api=1&query=Agave+Itaewon",[cite: 1]
+                tags: ["fire", "latin", "dancers", "lose_myself"]
+            },
+            juntoslatinos: {
+                name: "Juntos Latinos",
+                area: "Itaewon (이태원)",
+                genre: "Reggaeton / Salsa / Bachata",
+                vibe: "Authentic Latin party hub where Latino expats and dance lovers gather for tropical beats and energetic couple dancing.",[cite: 1]
+                dress: "Casual Partywear / Dance-friendly",
+                tip: "Don't hesitate to jump on the dance floor; extremely welcoming and passionate crowd.",[cite: 1]
+                map: "https://www.google.com/maps/search/?api=1&query=Juntos+Latinos+Itaewon",[cite: 1]
+                tags: ["fire", "latin", "globals", "dancers", "lose_myself", "make_friends"]
+            },
+            danco2: {
+                name: "Danco 2",
+                area: "Itaewon (이태원)",
+                genre: "Latin Pop / Reggaeton",
+                vibe: "Cozy and vibrant Latin bar filled with non-stop Reggaeton hits, tequilas, and friendly international partygoers.",[cite: 1]
+                dress: "Casual Partywear",
+                tip: "Great spot for drinking shots and singing along to Latin top 40 hits.",[cite: 1]
+                map: "https://www.google.com/maps/search/?api=1&query=Danco+2+Itaewon",[cite: 1]
+                tags: ["fire", "air", "latin", "globals", "lose_myself"]
+            },
+            labamba: {
+                name: "La Bamba",
+                area: "Hongdae (홍대)",
+                genre: "Salsa / Bachata / Latin",
+                vibe: "Hongdae's premier Latin dance spot where locals and foreigners dance Salsa & Bachata together.",[cite: 1]
+                dress: "Flexible / Dance-friendly",
+                tip: "Very welcoming to beginners and tourists alike.",[cite: 1]
+                map: "https://www.google.com/maps/search/?api=1&query=La+Bamba+Hongdae",[cite: 1]
+                tags: ["fire", "air", "latin", "globals", "dancers", "lose_myself", "make_friends"]
+            },
+            badass: {
+                name: "Badass Itaewon",
+                area: "Itaewon (이태원)",
+                genre: "Hip-Hop / Afrobeat",
+                vibe: "Raw, energetic Hip-Hop joint blasting old-school gems and modern trap bangers.",[cite: 1]
+                dress: "Streetwear / Sneakers",
+                tip: "High-density dance floor; wear comfortable shoes.",[cite: 1]
+                map: "https://www.google.com/maps/search/?api=1&query=Badass+Itaewon",[cite: 1]
+                tags: ["fire", "air", "hiphop", "dancers", "lose_myself", "make_friends"]
+            },
+            owllounge: {
+                name: "Owl Lounge",
+                area: "Itaewon (이태원)",
+                genre: "Authentic Hip-Hop / R&B",
+                vibe: "Legendary Itaewon Hip-Hop basement landmark known for crystal-clear sound and heavy Hip-Hop playlist sets.",[cite: 1]
+                dress: "Streetwear / Stylish Casual",
+                tip: "Gets extremely packed after 1:00 AM; arrive early to secure a good spot near the booth.",[cite: 1]
+                map: "https://www.google.com/maps/search/?api=1&query=Owl+Lounge+Itaewon",[cite: 1]
+                tags: ["fire", "hiphop", "locals", "lose_myself", "local_culture"]
+            },
+            xx2: {
+                name: "XX2",
+                area: "Hongdae (홍대)",
+                genre: "Trendy Hip-Hop / Trap",
+                vibe: "Massive Hip-Hop club hosting famous Korean rappers and DJs, blasting heavy trap and modern Hip-Hop bangers.",[cite: 1]
+                dress: "Trendy Streetwear / Stylish",
+                tip: "Peak hours get very crowded; check their Instagram for surprise guest artist lineups.",[cite: 1]
+                map: "https://www.google.com/maps/search/?api=1&query=XX2+Hongdae",[cite: 1]
+                tags: ["fire", "earth", "hiphop", "locals", "local_culture"]
+            },
+            henz: {
+                name: "The Henz Club",
+                area: "Hongdae (홍대)",
+                genre: "Subculture Hip-Hop",
+                vibe: "The heart of Seoul's street culture. Cutting-edge Hip-Hop/Electronic beats visited by top Korean artists.",[cite: 1]
+                dress: "Fashion-forward Streetwear / Oversized",
+                tip: "Strictly music-focused crowd; line builds up very fast.",[cite: 1]
+                map: "https://www.google.com/maps/search/?api=1&query=The+Henz+Club+Hongdae",[cite: 1]
+                tags: ["earth", "hiphop", "locals", "local_culture", "stylish_night"]
+            },
+            sinkhole: {
+                name: "Sinkhole",
+                area: "Hongdae (홍대)",
+                genre: "Trendy Hip-Hop / R&B",
+                vibe: "Affordable, friendly, and wildly popular casual Hip-Hop basement venue packed with students.",[cite: 1]
+                dress: "Super Casual",
+                tip: "Budget-friendly drinks and zero dress code pressure.",[cite: 1]
+                map: "https://www.google.com/maps/search/?api=1&query=Sinkhole+Hongdae",[cite: 1]
+                tags: ["air", "hiphop", "locals", "local_culture"]
+            },
+            rollie: {
+                name: "Rollie",
+                area: "Hongdae (홍대)",
+                genre: "Trendy Hip-Hop / R&B",
+                vibe: "High-energy trendy Hip-Hop club in Hongdae delivering heavy bass drops, trap bangers, and an electric youth crowd.",[cite: 1]
+                dress: "Casual / Partywear",
+                tip: "Gets packed with high-tension partygoers late at night; wear comfortable shoes for heavy dancing.",[cite: 1]
+                map: "https://www.google.com/maps/search/?api=1&query=Rollie+Hongdae",[cite: 1]
+                tags: ["fire", "earth", "hiphop", "globals", "lose_myself"]
+            },
+            seoulpub: {
+                name: "Seoul Pub",
+                area: "Hongdae & Itaewon (홍대 & 이태원)",
+                genre: "All Mix / Party Pub",
+                vibe: "Lively and welcoming party pub in Hongdae where international travelers and locals mingle over drinks and commercial party beats.",[cite: 1]
+                dress: "Casual / Comfortable",
+                tip: "Great low-pressure venue to grab a drink, meet new friends, and warm up before late-night clubbing.",[cite: 1]
+                map: "https://maps.app.goo.gl/asKr4CRd6C9bBgzq8",[cite: 1]
+                tags: ["air", "kpop", "globals", "make_friends"]
+            },
+            mongs: {
+                name: "Mongs",
+                area: "Hongdae (홍대)",
+                genre: "All Mix / Commercial EDM",
+                vibe: "Energetic All-Mix party spot in central Hongdae packed with young locals and tourists dancing to high-tempo party tracks.",[cite: 1]
+                dress: "Casual / Partywear",
+                tip: "Great choice for an easygoing, high-energy party atmosphere without dress code stress.",[cite: 1]
+                map: "https://www.google.com/maps/search/?api=1&query=Mongs+Hongdae",[cite: 1]
+                tags: ["fire", "air", "kpop", "locals", "globals", "dancers", "lose_myself", "make_friends"]
+            },
+            thisisclub25: {
+                name: "Club 25",
+                area: "Hongdae (홍대)",
+                genre: "Hip-Hop / All Mix",
+                vibe: "High-energy all-mix party venue in Hongdae packed with a vibrant crowd dancing to a mix of commercial hits, hip-hop, and club anthems.",[cite: 1]
+                dress: "Super Casual / Streetwear",
+                tip: "Arrive early for free entry offers and cheap drinks before peak hours.",[cite: 1]
+                map: "https://www.google.com/maps/search/?api=1&query=Club+25+Hongdae",[cite: 1]
+                tags: ["fire", "air", "kpop", "globals", "locals", "dancers", "lose_myself", "make_friends"]
+            },
+            b1: {
+                name: "B1",
+                area: "Hongdae (홍대)",
+                genre: "All Mix / Party Lounge",
+                vibe: "Long-standing basement lounge club in Hongdae offering accessible commercial pop, Hip-Hop, and party tunes.",[cite: 1]
+                dress: "Casual / Smart Casual",
+                tip: "Good middle-ground spot for casual drinks and light dancing with friends.",[cite: 1]
+                map: "https://www.google.com/maps/search/?api=1&query=B1+Hongdae",[cite: 1]
+                tags: ["fire", "air", "kpop", "globals", "locals", "dancers", "lose_myself"]
+            }
+        };
+
+        const QUESTIONS = [
+            {
+                id: "q1",
+                title: "What's your Zodiac Element?",[cite: 1]
+                subtitle: "Choose the element that aligns with your astrological aura.",[cite: 1]
+                options: [
+                    { label: "🔥 Fire Signs (Aries, Leo, Sag)", desc: "High energy, explosive passion, center of the dancefloor", val: "fire" },[cite: 1]
+                    { label: "🌍 Earth Signs (Taurus, Virgo, Cap)", desc: "Aesthetic, sensory experience, stylish & curated vibes", val: "earth" },[cite: 1]
+                    { label: "🌬️ Air Signs (Gemini, Libra, Aqua)", desc: "Social butterfly, trendy sound, open to making friends", val: "air" },[cite: 1]
+                    { label: "🌊 Water Signs (Cancer, Scorpio, Pisces)", desc: "Deep bass, dark & immersive beats, hypnotic trance", val: "water" }[cite: 1]
+                ]
+            },
+            {
+                id: "q2",
+                title: "What's the ultimate soundtrack for your night?",[cite: 1]
+                subtitle: "Select the rhythm you want pounding through your chest.",[cite: 1]
+                options: [
+                    { label: "🎧 Dark, Heavy Techno & Industrial", desc: "Fast-paced, hypnotic, underground raves", val: "techno" },[cite: 1]
+                    { label: "🎤 Trendy Hip-Hop, R&B & Afrobeat", desc: "Heavy bass, trap bangers, and street rhythms", val: "hiphop" },[cite: 1]
+                    { label: "🇰🇷🎶 K-Pop & Commercial Pop All-Mix", desc: "Sing-along choruses, viral pop hits, high-energy party drops", val: "kpop" },[cite: 1]
+                    { label: "💃 Spicy Reggaeton, Salsa & Latin Beats", desc: "Tropical heat, couple dancing, high passion", val: "latin" },[cite: 1]
+                    { label: "🍸 Groovy House, Disco & Chill Lounge", desc: "Uplifting rhythms, cocktail conversations", val: "house" }[cite: 1]
+                ]
+            },
+            {
+                id: "q3",
+                title: "Who do you want to dance with tonight?",[cite: 1]
+                subtitle: "Pick your ideal midnight crowd.",[cite: 1]
+                options: [
+                    { label: "🖤 Underground Music Snobs & Ravers", desc: "Music comes first; zero posing", val: "ravers" },[cite: 1]
+                    { label: "🌍 Global Travelers & International Party Animals", desc: "Diverse crowd from all around the world", val: "globals" },[cite: 1]
+                    { label: "👟 Local Korean Hipsters & Fashionistas", desc: "Trendy Seoul locals with top-tier outfits", val: "locals" },[cite: 1]
+                    { label: "🔥 Passionate Dancers & Social Spirits", desc: "People who love to dance and interact freely", val: "dancers" }[cite: 1]
+                ]
+            },
+            {
+                id: "q4",
+                title: "What's your main priority tonight?",[cite: 1]
+                subtitle: "What defines a successful night out for you in Seoul?",[cite: 1]
+                options: [
+                    { label: "🌀 Lose myself in darkness until sunrise", desc: "Non-stop dance immersion", val: "lose_myself" },[cite: 1]
+                    { label: "🍻 Drink & make new global friends", desc: "Socializing and creating fun memories", val: "make_friends" },[cite: 1]
+                    { label: "🇰🇷 Feel authentic local Seoul nightlife", desc: "Real Hongdae/Itaewon youth culture", val: "local_culture" },[cite: 1]
+                    { label: "🍹 Enjoy craft drinks & groovy rhythms", desc: "Sensory, stylish, and comfortable nightlife", val: "stylish_night" }[cite: 1]
+                ]
+            }
+        ];
+
+        let currentStep = 0;
+        let userAnswers = [];
+        let lastResultData = { persona: "", primaryName: "", primaryArea: "", secondaryName: "" };
+
+        const introScreen = document.getElementById('intro-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const loadingScreen = document.getElementById('loading-screen');
+        const resultScreen = document.getElementById('result-screen');
+        
+        const stepIndicator = document.getElementById('step-indicator');
+        const stepPercent = document.getElementById('step-percent');
+        const progressBar = document.getElementById('progress-bar');
+        const questionTitle = document.getElementById('question-title');
+        const questionSubtitle = document.getElementById('question-subtitle');
+        const optionsContainer = document.getElementById('options-container');
+        const backBtn = document.getElementById('back-btn');
+
+        function startQuiz() {
+            introScreen.classList.add('hidden');
+            quizScreen.classList.remove('hidden');
+            currentStep = 0;
+            userAnswers = [];
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const q = QUESTIONS[currentStep];
+            stepIndicator.innerText = `Step ${currentStep + 1} of ${QUESTIONS.length}`;[cite: 1]
+            const percent = ((currentStep + 1) / QUESTIONS.length) * 100;
+            stepPercent.innerText = `${Math.round(percent)}%`;[cite: 1]
+            progressBar.style.width = `${percent}%`;
+
+            if (currentStep === 0) {
+                backBtn.classList.add('hidden');
+            } else {
+                backBtn.classList.remove('hidden');
+            }
+
+            questionTitle.innerText = q.title;
+            questionSubtitle.innerText = q.subtitle;
+
+            optionsContainer.innerHTML = '';
+            q.options.forEach((opt) => {
+                const btn = document.createElement('button');
+                const isSelected = userAnswers[currentStep] === opt.val;
+                
+                btn.className = `glass-option w-full p-4 rounded-2xl text-left flex flex-col gap-1 transition-all ${isSelected ? 'border-neonPurple bg-neonPurple/15 shadow-glowPurple' : ''}`;
+                btn.innerHTML = `
+                    <span class="font-heading font-bold text-sm text-zinc-100">${opt.label}</span>
+                    <span class="text-xs text-zinc-400">${opt.desc}</span>
+                `;
+                btn.onclick = () => selectOption(opt.val);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function selectOption(val) {
+            userAnswers[currentStep] = val;
+            currentStep++;
+
+            if (currentStep < QUESTIONS.length) {
+                quizScreen.classList.remove('fade-in');
+                void quizScreen.offsetWidth; 
+                quizScreen.classList.add('fade-in');
+                renderQuestion();
+            } else {
+                quizScreen.classList.add('hidden');
+                loadingScreen.classList.remove('hidden');
+                setTimeout(() => {
+                    loadingScreen.classList.add('hidden');
+                    calculateAndShowResults();
+                    resultScreen.classList.remove('hidden');
+                }, 1500); 
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 0) {
+                currentStep--;
+                quizScreen.classList.remove('fade-in');
+                void quizScreen.offsetWidth;
+                quizScreen.classList.add('fade-in');
+                renderQuestion();
+            }
+        }
+
+        function calculateAndShowResults() {
+            let clubScores = [];
+
+            Object.keys(CLUBS).forEach(key => {
+                let club = CLUBS[key];
+                let score = 0;
+
+                if (club.tags.includes(userAnswers[1])) {
+                    score += 3;
+                }
+                if (club.tags.includes(userAnswers[0])) score += 1;
+                if (club.tags.includes(userAnswers[2])) score += 1;
+                if (club.tags.includes(userAnswers[3])) score += 1;
+
+                clubScores.push({ id: key, clubData: club, score: score });
+            });
+
+            clubScores.sort((a, b) => b.score - a.score);
+
+            const primary = clubScores[0].clubData;
+            const secondary = clubScores[1].clubData;
+
+            document.getElementById('primary-name').innerText = primary.name;
+            document.getElementById('primary-area').innerText = `📍 ${primary.area}`;[cite: 1]
+            document.getElementById('primary-genre-badge').innerText = primary.genre;
+            document.getElementById('primary-vibe').innerText = primary.vibe;
+            document.getElementById('primary-dress').innerText = primary.dress;
+            document.getElementById('primary-tip').innerText = primary.tip;
+            document.getElementById('primary-map-btn').href = primary.map;
+
+            document.getElementById('secondary-name').innerText = secondary.name;
+            document.getElementById('secondary-area').innerText = `📍 ${secondary.area}`;[cite: 1]
+            document.getElementById('secondary-genre-badge').innerText = secondary.genre;
+            document.getElementById('secondary-vibe').innerText = secondary.vibe;
+            document.getElementById('secondary-map-btn').href = secondary.map;
+
+            const element = userAnswers[0];
+            const personaTitles = {
+                fire: "🔥 The High-Energy Party Alchemist",
+                earth: "🌍 The Stylish Lounge Curator",
+                air: "🌬️ The Social Butterfly Raver",
+                water: "🌊 The Dark Underground Sorcerer"
+            };
+            const personaText = personaTitles[element] || "The Seoul Night Explorer";
+            document.getElementById('persona-title').innerText = personaText;
+
+            lastResultData = {
+                persona: personaText,
+                primaryName: primary.name,
+                primaryArea: primary.area,
+                secondaryName: secondary.name
+            };
+        }
+
+        function retakeQuiz() {
+            resultScreen.classList.add('hidden');
+            introScreen.classList.remove('hidden');
+            currentStep = 0;
+            userAnswers = []; 
+        }
+
+        // 영문 공유 텍스트 적용 완료
+        function shareResult() {
+            const shareText = `🔮 [Zodiac Seoul Club Matcher]\n` +
+                              `My Vibe Result: ${lastResultData.persona}\n` +
+                              `🏆 Top Club Match: ${lastResultData.primaryName} (${lastResultData.primaryArea})\n` +
+                              `✨ Plan B Orbit: ${lastResultData.secondaryName}\n\n` +
+                              `Find your ideal Seoul club match too 👇\n` + 
+                              window.location.href;
+
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Zodiac Seoul Club Matcher',[cite: 1]
+                    text: shareText,
+                    url: window.location.href
+                }).catch(() => {});
+            } else {
+                navigator.clipboard.writeText(shareText).then(() => {
+                    showToast("Result & link copied! Share with your friends ✨");
+                }).catch(() => {
+                    showToast("Failed to copy link.");
+                });
+            }
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-msg').innerText = msg;
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
